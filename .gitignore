@@ -1,0 +1,9 @@
+*~
+
+*.swp
+*.DS_Store
+
+# iOS
+project.xcworkspace/
+xcuserdata/
+build/
