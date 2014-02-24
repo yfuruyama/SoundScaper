@@ -8,6 +8,9 @@
 
 #import "AudioHost.h"
 
+#define NOTE_INTERVAL 0.25
+#define BASE_VELOCITY 64
+
 @implementation AudioHost
 
 @synthesize graphSampleRate;
@@ -23,6 +26,10 @@
     
     [self setupAudioSession];
     [self configureAndInitializeAudioProcessingGraph];
+    
+    self.externalInputManager = [[ExternalInputManager alloc] init];
+    self.noteGenerator = [[NoteGenerator alloc] init];
+    
     
     return self;
 }
@@ -208,8 +215,6 @@
         return;
     }
     
-    
-    
     CAShow(processingGraph);
     
     NSLog(@"Initialize the audio processing graph.");
@@ -257,6 +262,60 @@
 {
     UInt32 noteCommand = 0x80; // MIDI note off message for channel 0
     MusicDeviceMIDIEvent(self.samplerUnit, noteCommand, noteNum, velocity, 0);
+}
+
+- (void)play
+{
+    self.playTimer = [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL target:self selector:@selector(soundNote) userInfo:nil repeats:YES];
+}
+
+- (void)pause
+{
+    if (self.playTimer && [self.playTimer isValid]) {
+        [self.playTimer invalidate];
+    }
+    self.playTimer = nil;
+}
+
+- (BOOL)isPlaying
+{
+    if (self.playTimer && [self.playTimer isValid]) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+- (void)soundNote
+{
+    Float32 micLevel = [self.externalInputManager getExternalInputLevel];
+    int noteIndex = [self.noteGenerator micLevelToNoteIndex:micLevel];
+    NSLog(@"noteIndex: %d", noteIndex);
+    
+    UInt32 velocity = BASE_VELOCITY + [self.noteGenerator getVelocityWeight];
+    
+    // send note-on message
+    UInt32 noteNum = [self.noteGenerator getNote:noteIndex];
+    [self playNoteOn:noteNum velocity:velocity];
+    
+    // send note-off message after some delay
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:@selector(playNoteOff:velocity:)]];
+    [invocation setSelector:@selector(playNoteOff:velocity:)];
+    [invocation setTarget:self];
+    [invocation setArgument:&noteNum atIndex:2];
+    [invocation setArgument:&velocity atIndex:3];
+    [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL - 0.05 invocation:invocation repeats:NO];
+}
+
+- (void)changeScale:(int)startNoteIndex type:(int)scaleType
+{
+    if ([self isPlaying]) {
+        [self pause];
+        [self.noteGenerator setScale:startNoteIndex type:scaleType];
+        [self play];
+    } else {
+        [self.noteGenerator setScale:startNoteIndex type:scaleType];
+    }
 }
 
 #pragma mark -

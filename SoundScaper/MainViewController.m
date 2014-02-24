@@ -7,9 +7,7 @@
 //
 
 #import "MainViewController.h"
-
-#define NOTE_INTERVAL 0.25
-#define BASE_VELOCITY 64
+#import "NoteGenerator.h"
 
 @interface MainViewController ()
 
@@ -30,91 +28,86 @@
 {
     [super viewDidLoad];
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    button.frame = CGRectMake(0, 0, 100, 40);
-    button.center = CGPointMake(160, 200);
-    [button setTitle:@"Start" forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(buttonDidTouch) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:button];
-    
     // 各Audio関連の初期化
     self.audioHost = [[AudioHost alloc] init];
-    self.externalInputManager = [[ExternalInputManager alloc] init];
-    UInt32 majorScale[] = {2, 2, 1, 2, 2, 2, 1};
+    
+    // UIの初期化
+    UIButton *playPauseButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    playPauseButton.frame = CGRectMake(0, 0, 100, 40);
+    playPauseButton.center = CGPointMake(160, 200);
+    [playPauseButton setTitle:@"Play/Pause" forState:UIControlStateNormal];
+    [playPauseButton addTarget:self action:@selector(playPauseButtonDidTouch) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:playPauseButton];
+    
+    UILabel *majorScaleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 260, 100, 20)];
+    [majorScaleLabel setText:@"Major Scale"];
+    [majorScaleLabel setFont:[UIFont fontWithName:@"ArialMT" size:14]];
+    [majorScaleLabel setTextColor:[UIColor colorWithRed:0 green:0.4 blue:1 alpha:1.0]];
+    [self.view addSubview:majorScaleLabel];
+    
+    UISegmentedControl *majorSeg = [[UISegmentedControl alloc] initWithItems:[NoteGenerator getMajorScaleName]];
+    majorSeg.tag = MAJOR_SCALE;
+    majorSeg.frame = CGRectMake(0, 0, 300, 40);
+    majorSeg.center = CGPointMake(160, 300);
+    majorSeg.selectedSegmentIndex = 0;
+    [majorSeg setTitleTextAttributes:@{NSFontAttributeName: [UIFont fontWithName:@"ArialMT" size:10]} forState:UIControlStateNormal];
+    [majorSeg addTarget:self action:@selector(scaleChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:majorSeg];
+    
+    UILabel *minorScaleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 330, 100, 20)];
+    [minorScaleLabel setText:@"Minor Scale"];
+    [minorScaleLabel setFont:[UIFont fontWithName:@"ArialMT" size:14]];
+    [minorScaleLabel setTextColor:[UIColor colorWithRed:0 green:0.4 blue:1 alpha:1.0]];
+    [self.view addSubview:minorScaleLabel];
+    
+    UISegmentedControl *minorSeg = [[UISegmentedControl alloc] initWithItems:[NoteGenerator getMinorScaleName]];
+    [minorSeg setTitleTextAttributes:@{NSFontAttributeName: [UIFont fontWithName:@"ArialMT" size:10]} forState:UIControlStateNormal];
+    minorSeg.tag = MINOR_SCALE;
+    minorSeg.frame = CGRectMake(0, 0, 300, 40);
+    minorSeg.center = CGPointMake(160, 370);
+    [minorSeg addTarget:self action:@selector(scaleChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:minorSeg];
+    
+    UILabel *okinawaScaleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 400, 100, 20)];
+    [okinawaScaleLabel setText:@"Okinawa Scale"];
+    [okinawaScaleLabel setFont:[UIFont fontWithName:@"ArialMT" size:14]];
+    [okinawaScaleLabel setTextColor:[UIColor colorWithRed:0 green:0.4 blue:1 alpha:1.0]];
+    [self.view addSubview:okinawaScaleLabel];
+    
+    UISegmentedControl *okinawaSeg = [[UISegmentedControl alloc] initWithItems:[NoteGenerator getOkinawaScaleName]];
+    [okinawaSeg setTitleTextAttributes:@{NSFontAttributeName: [UIFont fontWithName:@"ArialMT" size:10]} forState:UIControlStateNormal];
+    okinawaSeg.tag = OKINAWA_SCALE;
+    okinawaSeg.frame = CGRectMake(0, 0, 300, 40);
+    okinawaSeg.center = CGPointMake(160, 440);
+    [okinawaSeg addTarget:self action:@selector(scaleChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:okinawaSeg];
+    
+    self.scaleSegArray = [NSArray arrayWithObjects:majorSeg, minorSeg, okinawaSeg, nil];
+}
 
-    // generate noteList
-    self.noteList = [NSMutableArray arrayWithCapacity:128];
-    UInt32 startNote = 0;
-    BOOL continued = true;
-    UInt32 prevNote = startNote;
-    while (continued) {
-        for (int i = 0; i < 7; i++) {
-            UInt32 note = majorScale[i] + prevNote;
-            if (note > 127) {
-                continued = false;
-                break;
-            }
-            [self.noteList addObject:@(note)];
-            prevNote = note;
-        }
+- (void)playPauseButtonDidTouch
+{
+    if ([self.audioHost isPlaying]) {
+        [self.audioHost pause];
+    } else {
+        [self.audioHost play];
     }
-    for (int i = 0; i < [self.noteList count]; i++) {
-        NSNumber *num = [self.noteList objectAtIndex:i];
-        NSLog(@"%d", [num integerValue]);
+}
+
+- (void)scaleChanged:(UISegmentedControl *)seg
+{
+    int selectedIndex = seg.selectedSegmentIndex;
+
+    // 一度全てのスケールのコントロールの選択を消す
+    for (int i = 0; i < [self.scaleSegArray count]; i++) {
+        UISegmentedControl *scaleSeg = [self.scaleSegArray objectAtIndex:i];
+        scaleSeg.selectedSegmentIndex = UISegmentedControlNoSegment;
     }
     
-}
-
-- (void)buttonDidTouch
-{
-    // Loop
-    [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL target:self selector:@selector(soundNote) userInfo:nil repeats:YES];
-}
-
-- (void)soundNote
-{
-    Float32 micLevel = [self.externalInputManager getExternalInputLevel];
-    int noteIndex = [self micLevelToNoteIndex:micLevel noteList:self.noteList];
-    NSLog(@"noteIndex: %d", noteIndex);
+    // 再度選択
+    seg.selectedSegmentIndex = selectedIndex;
     
-    UInt32 velocity = BASE_VELOCITY + [self getVelocityWeight];
-    
-    // send note on message
-    UInt32 noteNum = [(NSNumber*)[self.noteList objectAtIndex:noteIndex] integerValue];
-    [self.audioHost playNoteOn:noteNum velocity:velocity];
-    
-    // send note off message after some delay
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[self.audioHost methodSignatureForSelector:@selector(playNoteOff:velocity:)]];
-    [invocation setSelector:@selector(playNoteOff:velocity:)];
-    [invocation setTarget:self.audioHost];
-    [invocation setArgument:&noteNum atIndex:2];
-    [invocation setArgument:&velocity atIndex:3];
-    [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL - 0.05 invocation:invocation repeats:NO];
-}
-
-- (int)micLevelToNoteIndex:(Float32)level noteList:(NSMutableArray*)noteList
-{
-    Float32 micMin = -70;
-    Float32 micMax = 0;
-    int noteIndexMin = 0;
-    int noteIndexMax = [noteList count];
-    
-    float unit = (micMax - micMin) / (noteIndexMax - noteIndexMin);
-    for (int index = noteIndexMin; index < noteIndexMax; index++) {
-        if (micMin + (unit * index) > level) {
-            return index;
-        }
-    }
-    
-    // コーナーケースがわからないので一応0返す
-    return 0;
-}
-
-// for humanizing
-- (int)getVelocityWeight
-{
-    int r = arc4random() % 64;
-    return r - 30;
+    [self.audioHost changeScale:[seg selectedSegmentIndex] type:seg.tag];
 }
 
 - (void)didReceiveMemoryWarning

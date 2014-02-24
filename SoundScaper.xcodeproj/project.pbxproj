@@ -23,6 +23,7 @@
 		25554D9818B9FAA2008998AD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25554D9718B9FAA2008998AD /* AudioToolbox.framework */; };
 		25554D9B18B9FBF4008998AD /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25554D9A18B9FBF4008998AD /* MainViewController.m */; };
 		25554D9E18BA05CF008998AD /* ExternalInputManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 25554D9D18BA05CF008998AD /* ExternalInputManager.m */; };
+		25AB394C18BB073900BB98BC /* NoteGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 25AB394B18BB073900BB98BC /* NoteGenerator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		25554D9A18B9FBF4008998AD /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		25554D9C18BA05CF008998AD /* ExternalInputManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalInputManager.h; sourceTree = "<group>"; };
 		25554D9D18BA05CF008998AD /* ExternalInputManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalInputManager.m; sourceTree = "<group>"; };
+		25AB394A18BB073900BB98BC /* NoteGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoteGenerator.h; sourceTree = "<group>"; };
+		25AB394B18BB073900BB98BC /* NoteGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoteGenerator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +133,8 @@
 				25554D9A18B9FBF4008998AD /* MainViewController.m */,
 				25554D9C18BA05CF008998AD /* ExternalInputManager.h */,
 				25554D9D18BA05CF008998AD /* ExternalInputManager.m */,
+				25AB394A18BB073900BB98BC /* NoteGenerator.h */,
+				25AB394B18BB073900BB98BC /* NoteGenerator.m */,
 			);
 			path = SoundScaper;
 			sourceTree = "<group>";
@@ -261,6 +266,7 @@
 				25554D9618B9FA43008998AD /* AudioHost.m in Sources */,
 				25554D9E18BA05CF008998AD /* ExternalInputManager.m in Sources */,
 				25554D7618B9F9E8008998AD /* AppDelegate.m in Sources */,
+				25AB394C18BB073900BB98BC /* NoteGenerator.m in Sources */,
 				25554D7218B9F9E8008998AD /* main.m in Sources */,
 				25554D9B18B9FBF4008998AD /* MainViewController.m in Sources */,
 			);

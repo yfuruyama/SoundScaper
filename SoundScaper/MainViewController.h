@@ -8,12 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "AudioHost.h"
-#import "ExternalInputManager.h"
 
 @interface MainViewController : UIViewController
 
 @property AudioHost *audioHost;
-@property ExternalInputManager *externalInputManager;
-@property NSMutableArray *noteList;
+@property NSArray *scaleSegArray;
 
 @end
