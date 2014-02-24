@@ -127,7 +127,7 @@ NSArray *okinawaScale;
 - (int)getVelocityWeight
 {
     int r = arc4random() % 64;
-    return r - 30;
+    return r - 40;
 }
 
 @end

@@ -9,7 +9,7 @@
 #import "AudioHost.h"
 
 #define NOTE_INTERVAL 0.25
-#define BASE_VELOCITY 64
+#define BASE_VELOCITY 48
 
 @implementation AudioHost
 
@@ -293,6 +293,7 @@
     NSLog(@"noteIndex: %d", noteIndex);
     
     UInt32 velocity = BASE_VELOCITY + [self.noteGenerator getVelocityWeight];
+    NSLog(@"velocity: %d", velocity);
     
     // send note-on message
     UInt32 noteNum = [self.noteGenerator getNote:noteIndex];
