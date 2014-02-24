@@ -8,7 +8,8 @@
 
 #import "MainViewController.h"
 
-#define NOTE_INTERVAL 0.5
+#define NOTE_INTERVAL 0.25
+#define BASE_VELOCITY 64
 
 @interface MainViewController ()
 
@@ -76,9 +77,10 @@
     int noteIndex = [self micLevelToNoteIndex:micLevel noteList:self.noteList];
     NSLog(@"noteIndex: %d", noteIndex);
     
+    UInt32 velocity = BASE_VELOCITY + [self getVelocityWeight];
+    
     // send note on message
     UInt32 noteNum = [(NSNumber*)[self.noteList objectAtIndex:noteIndex] integerValue];
-    UInt32 velocity = 30;
     [self.audioHost playNoteOn:noteNum velocity:velocity];
     
     // send note off message after some delay
@@ -87,7 +89,7 @@
     [invocation setTarget:self.audioHost];
     [invocation setArgument:&noteNum atIndex:2];
     [invocation setArgument:&velocity atIndex:3];
-    [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL - 0.1 invocation:invocation repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:NOTE_INTERVAL - 0.05 invocation:invocation repeats:NO];
 }
 
 - (int)micLevelToNoteIndex:(Float32)level noteList:(NSMutableArray*)noteList
@@ -106,6 +108,13 @@
     
     // コーナーケースがわからないので一応0返す
     return 0;
+}
+
+// for humanizing
+- (int)getVelocityWeight
+{
+    int r = arc4random() % 64;
+    return r - 30;
 }
 
 - (void)didReceiveMemoryWarning
