@@ -34,10 +34,17 @@
     // UIの初期化
     UIButton *playPauseButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     playPauseButton.frame = CGRectMake(0, 0, 100, 40);
-    playPauseButton.center = CGPointMake(160, 200);
+    playPauseButton.center = CGPointMake(160, 160);
     [playPauseButton setTitle:@"Play/Pause" forState:UIControlStateNormal];
     [playPauseButton addTarget:self action:@selector(playPauseButtonDidTouch) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:playPauseButton];
+    
+    UISegmentedControl *modeSeg = [[UISegmentedControl alloc] initWithItems:@[@"AMP", @"FFT"]];
+    modeSeg.selectedSegmentIndex = 0;
+    modeSeg.frame = CGRectMake(0, 0, 100, 30);
+    modeSeg.center = CGPointMake(160, 200);
+    [modeSeg addTarget:self action:@selector(modeChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:modeSeg];
     
     UILabel *majorScaleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 260, 100, 20)];
     [majorScaleLabel setText:@"Major Scale"];
@@ -91,6 +98,16 @@
         [self.audioHost pause];
     } else {
         [self.audioHost play];
+    }
+}
+
+- (void)modeChanged:(UISegmentedControl *)seg
+{
+    int selectedIndex = seg.selectedSegmentIndex;
+    if (selectedIndex == 0) {
+        [self.audioHost changeInputMode:InputModeAMP];
+    } else if (selectedIndex == 1) {
+        [self.audioHost changeInputMode:InputModeFFT];
     }
 }
 

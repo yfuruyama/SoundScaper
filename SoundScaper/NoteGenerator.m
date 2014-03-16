@@ -59,6 +59,24 @@ NSArray *okinawaScale;
     return 0;
 }
 
+- (int)freqToNoteIndex:(int)freq
+{
+    Float32 freqMin = 0;
+    Float32 freqMax = 256;
+    int noteIndexMin = 0;
+    int noteIndexMax = [self.noteList count];
+    
+    float unit = (freqMax - freqMin) / (noteIndexMax - noteIndexMin);
+    for (int index = noteIndexMin; index < noteIndexMax; index++) {
+        if (freqMin + (unit * index) > freq) {
+            return index;
+        }
+    }
+    
+    // コーナーケースがわからないので一応0返す
+    return 0;
+}
+
 - (int)getNote:(int)index
 {
     return [(NSNumber*)[self.noteList objectAtIndex:index] integerValue];

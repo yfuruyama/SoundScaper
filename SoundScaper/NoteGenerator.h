@@ -19,6 +19,7 @@ enum Scale {
 @property NSMutableArray *noteList;
 
 - (int)micLevelToNoteIndex:(Float32)level;
+- (int)freqToNoteIndex:(int)freq;
 - (void)setScale:(int)startNoteIndex type:(int)scaleType;
 - (int)getNote:(int)index;
 - (int)getVelocityWeight;

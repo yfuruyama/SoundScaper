@@ -8,6 +8,10 @@
 
 #import "ExternalInputManager.h"
 
+@implementation ExternalInputManager
+@synthesize queue;
+@synthesize micBuffer;
+
 static void AudioInputCallback(void* inUserData,
                                AudioQueueRef inAQ,
                                AudioQueueBufferRef inBuffer,
@@ -15,9 +19,12 @@ static void AudioInputCallback(void* inUserData,
                                UInt32 inNumberPacketDescriptions,
                                const AudioStreamPacketDescription *inPacketDescs)
 {
+    ExternalInputManager *manager = (__bridge ExternalInputManager*)inUserData;
+    AudioQueueEnqueueBuffer(manager.queue, inBuffer, 0, nil);
+    
+    // FIXME: it's ambiguous that inBuffer is deallocated after this function returned.
+    manager.micBuffer = inBuffer;
 }
-
-@implementation ExternalInputManager
 
 - (id) init
 {
@@ -45,6 +52,12 @@ static void AudioInputCallback(void* inUserData,
     description.mReserved = 0;
     
     AudioQueueNewInput(&description, AudioInputCallback, (__bridge void*)(self), CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &queue);
+    
+    // create buffer for AudioQueue
+    AudioQueueBufferRef buffers[1];
+    AudioQueueAllocateBuffer(queue, (description.mSampleRate/10.0f) * description.mBytesPerFrame, &buffers[0]);
+    AudioQueueEnqueueBuffer(queue, buffers[0], 0, nil);
+    
     AudioQueueStart(queue, NULL);
     
     UInt32 levelMeterEnabled = true;
@@ -60,6 +73,20 @@ static void AudioInputCallback(void* inUserData,
     
     // maybe mAveragePower < 0
     return levelMeter.mAveragePower;
+}
+
+- (int)getExternalInputMaxFreq
+{
+    AudioQueueBufferRef buffer = self.micBuffer;
+//    NSLog(@"%p", buffer);
+    int numOfPacket = buffer->mAudioDataByteSize/16;
+    int16_t *audioData = (int16_t *)buffer->mAudioData;
+    float *inbuffer = malloc(sizeof(float) * buffer->mAudioDataByteSize/16);
+    for (int i = 0; i < numOfPacket; i++) {
+        inbuffer[i] = (float)(1.0 * audioData[i]);
+    }
+    FFTAnalyzer *analyzer = [[FFTAnalyzer alloc] init];
+    return [analyzer getMaxFreq:inbuffer length:numOfPacket];
 }
 
 @end

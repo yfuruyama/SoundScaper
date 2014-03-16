@@ -8,13 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "FFTAnalyzer.h"
 
 @interface ExternalInputManager : NSObject {
     AudioQueueRef queue;
+    AudioQueueBufferRef micBuffer;
 }
 
-//@property AudioQueueRef queue;
-
 - (Float32)getExternalInputLevel;
+- (int)getExternalInputMaxFreq;
+
+@property AudioQueueRef queue;
+@property AudioQueueBufferRef micBuffer;
 
 @end

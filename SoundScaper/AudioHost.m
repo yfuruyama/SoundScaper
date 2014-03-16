@@ -17,6 +17,7 @@
 @synthesize mixerUnit;
 @synthesize iOUnit;
 @synthesize samplerUnit;
+@synthesize inputMode;
 
 - (id)init
 {
@@ -26,10 +27,10 @@
     
     [self setupAudioSession];
     [self configureAndInitializeAudioProcessingGraph];
-    
+
     self.externalInputManager = [[ExternalInputManager alloc] init];
     self.noteGenerator = [[NoteGenerator alloc] init];
-    
+    [self changeInputMode:InputModeAMP];
     
     return self;
 }
@@ -288,8 +289,14 @@
 
 - (void)soundNote
 {
-    Float32 micLevel = [self.externalInputManager getExternalInputLevel];
-    int noteIndex = [self.noteGenerator micLevelToNoteIndex:micLevel];
+    int noteIndex = 0;
+    if ([self inputMode] == InputModeAMP) {
+        Float32 micLevel = [self.externalInputManager getExternalInputLevel];
+        noteIndex = [self.noteGenerator micLevelToNoteIndex:micLevel];
+    } else if ([self inputMode] == InputModeFFT) {
+        int maxFreq = [self.externalInputManager getExternalInputMaxFreq];
+        noteIndex = [self.noteGenerator freqToNoteIndex:maxFreq];
+    }
     NSLog(@"noteIndex: %d", noteIndex);
     
     UInt32 velocity = BASE_VELOCITY + [self.noteGenerator getVelocityWeight];
@@ -317,6 +324,11 @@
     } else {
         [self.noteGenerator setScale:startNoteIndex type:scaleType];
     }
+}
+
+- (void)changeInputMode:(InputMode)mode
+{
+    [self setInputMode:mode];
 }
 
 #pragma mark -

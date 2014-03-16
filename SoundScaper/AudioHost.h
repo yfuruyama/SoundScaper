@@ -12,6 +12,11 @@
 #import "ExternalInputManager.h"
 #import "NoteGenerator.h"
 
+typedef NS_ENUM(char, InputMode) {
+    InputModeAMP = 0,
+    InputModeFFT = 1,
+};
+
 @interface AudioHost : NSObject <AVAudioSessionDelegate> {
     Float64 graphSampleRate;
     CFURLRef sourceSoundURL;
@@ -21,6 +26,7 @@
     AudioUnit samplerUnit;
     CFURLRef midiURLRef;
     MusicPlayer musicPlayer;
+    InputMode inputMode;
 }
 
 @property (readwrite) Float64 graphSampleRate;
@@ -33,6 +39,7 @@
 @property NSMutableArray *noteList;
 @property NoteGenerator *noteGenerator;
 @property NSTimer *playTimer;
+@property InputMode inputMode;
 
 - (void)playNoteOn:(UInt32)noteNum velocity:(UInt32)velocity;
 - (void)playNoteOff:(UInt32)noteNum velocity:(UInt32)velocity;
@@ -40,5 +47,6 @@
 - (void)pause;
 - (BOOL)isPlaying;
 - (void)changeScale:(int)startNoteIndex type:(int)scaleType;
+- (void)changeInputMode:(InputMode)mode;
 
 @end

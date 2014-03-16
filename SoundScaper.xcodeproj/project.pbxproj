@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2523AE3718D5918100441F95 /* FFTAnalyzer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2523AE3618D5918100441F95 /* FFTAnalyzer.m */; };
 		25554D6618B9F9E8008998AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25554D6518B9F9E8008998AD /* Foundation.framework */; };
 		25554D6818B9F9E8008998AD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25554D6718B9F9E8008998AD /* CoreGraphics.framework */; };
 		25554D6A18B9F9E8008998AD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25554D6918B9F9E8008998AD /* UIKit.framework */; };
@@ -37,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2523AE3518D5918100441F95 /* FFTAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FFTAnalyzer.h; path = ../FFTAnalyzer.h; sourceTree = "<group>"; };
+		2523AE3618D5918100441F95 /* FFTAnalyzer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FFTAnalyzer.m; path = ../FFTAnalyzer.m; sourceTree = "<group>"; };
 		25554D6218B9F9E8008998AD /* SoundScaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoundScaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		25554D6518B9F9E8008998AD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		25554D6718B9F9E8008998AD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -123,6 +126,8 @@
 		25554D6B18B9F9E8008998AD /* SoundScaper */ = {
 			isa = PBXGroup;
 			children = (
+				2523AE3518D5918100441F95 /* FFTAnalyzer.h */,
+				2523AE3618D5918100441F95 /* FFTAnalyzer.m */,
 				25554D7418B9F9E8008998AD /* AppDelegate.h */,
 				25554D7518B9F9E8008998AD /* AppDelegate.m */,
 				25554D7718B9F9E8008998AD /* Images.xcassets */,
@@ -264,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				25554D9618B9FA43008998AD /* AudioHost.m in Sources */,
+				2523AE3718D5918100441F95 /* FFTAnalyzer.m in Sources */,
 				25554D9E18BA05CF008998AD /* ExternalInputManager.m in Sources */,
 				25554D7618B9F9E8008998AD /* AppDelegate.m in Sources */,
 				25AB394C18BB073900BB98BC /* NoteGenerator.m in Sources */,
