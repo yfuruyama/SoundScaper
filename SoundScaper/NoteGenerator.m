@@ -62,7 +62,7 @@ NSArray *okinawaScale;
 - (int)freqToNoteIndex:(int)freq
 {
     Float32 freqMin = 0;
-    Float32 freqMax = 256;
+    Float32 freqMax = 8192;
     int noteIndexMin = 0;
     int noteIndexMax = [self.noteList count];
     

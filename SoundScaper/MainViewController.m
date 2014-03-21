@@ -15,6 +15,7 @@
 
 @implementation MainViewController
 
+#pragma mark - View Method
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -92,6 +93,7 @@
     self.scaleSegArray = [NSArray arrayWithObjects:majorSeg, minorSeg, okinawaSeg, nil];
 }
 
+#pragma mark - Event Handler
 - (void)playPauseButtonDidTouch
 {
     if ([self.audioHost isPlaying]) {
@@ -127,6 +129,7 @@
     [self.audioHost changeScale:[seg selectedSegmentIndex] type:seg.tag];
 }
 
+#pragma mark - MISC
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

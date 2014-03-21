@@ -55,7 +55,8 @@ static void AudioInputCallback(void* inUserData,
     
     // create buffer for AudioQueue
     AudioQueueBufferRef buffers[1];
-    AudioQueueAllocateBuffer(queue, (description.mSampleRate/10.0f) * description.mBytesPerFrame, &buffers[0]);
+    // approximately 44.1k / 2 = 22k Points
+    AudioQueueAllocateBuffer(queue, (description.mSampleRate/2.0f) * description.mBytesPerFrame, &buffers[0]);
     AudioQueueEnqueueBuffer(queue, buffers[0], 0, nil);
     
     AudioQueueStart(queue, NULL);
@@ -78,15 +79,17 @@ static void AudioInputCallback(void* inUserData,
 - (int)getExternalInputMaxFreq
 {
     AudioQueueBufferRef buffer = self.micBuffer;
-//    NSLog(@"%p", buffer);
-    int numOfPacket = buffer->mAudioDataByteSize/16;
+    int numOfPacket = buffer->mAudioDataByteSize/2;
+    NSLog(@"numOfPacket: %d", numOfPacket);
     int16_t *audioData = (int16_t *)buffer->mAudioData;
-    float *inbuffer = malloc(sizeof(float) * buffer->mAudioDataByteSize/16);
+    float *inbuffer = malloc(sizeof(float) * numOfPacket);
     for (int i = 0; i < numOfPacket; i++) {
         inbuffer[i] = (float)(1.0 * audioData[i]);
     }
     FFTAnalyzer *analyzer = [[FFTAnalyzer alloc] init];
-    return [analyzer getMaxFreq:inbuffer length:numOfPacket];
+    int maxFreq = [analyzer getMaxFreq:inbuffer length:numOfPacket];
+    NSLog(@"maxFreq: %d", maxFreq);
+    return maxFreq;
 }
 
 @end
